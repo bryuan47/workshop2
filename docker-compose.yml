@@ -23,6 +23,7 @@ services:
     image: 842544789218.dkr.ecr.us-east-2.amazonaws.com/workshop2:workshop2_nginx
     volumes:
       - static_volume:/usr/src/app/static
+    command: nginx -g "daemon off;" 
     ports:
       - 8000:80
     depends_on:
