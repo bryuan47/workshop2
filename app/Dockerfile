@@ -1,22 +1,27 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
+# Use slim Python image
 FROM python:3.11-slim
 
-# Install system dependencies
+# Install system dependencies for psycopg2
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
 
+# Copy requirements first for caching
 COPY requirements.txt .
 
+# Upgrade pip and install Python dependencies
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of your app
 COPY . .
 
-# Make sure this points to your app
+# Start Gunicorn
 CMD ["gunicorn", "nc_tutorials.wsgi:application", "--bind", "0.0.0.0:8000"]
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
